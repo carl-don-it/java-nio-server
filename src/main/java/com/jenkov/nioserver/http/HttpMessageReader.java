@@ -34,7 +34,6 @@ public class HttpMessageReader implements IMessageReader {
     public void read(Socket socket, ByteBuffer byteBuffer) throws IOException {
         int bytesRead = socket.read(byteBuffer);
         byteBuffer.flip();
-
         if(byteBuffer.remaining() == 0){
             byteBuffer.clear();
             return;
@@ -47,6 +46,7 @@ public class HttpMessageReader implements IMessageReader {
             Message message = this.messageBuffer.getMessage();
             message.metaData = new HttpHeaders();
 
+            //todo 如果partialMessage有多个消息，需要解析成多个，然后socket会停止的
             message.writePartialMessageToMessage(nextMessage, endIndex);
 
             completeMessages.add(nextMessage);

@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
+import java.nio.channels.SocketChannel;
 import java.util.*;
 
 /**
@@ -81,8 +82,9 @@ public class SocketProcessor implements Runnable {
 
         while(newSocket != null){
             newSocket.socketId = this.nextSocketId++;
-            newSocket.socketChannel.configureBlocking(false);
-
+            SocketChannel socketChannel = newSocket.socketChannel;
+            socketChannel.configureBlocking(false);
+            System.out.println("--Socket accepted: "+ newSocket.socketId+ "   "+socketChannel);
             newSocket.messageReader = this.messageReaderFactory.createMessageReader();
             newSocket.messageReader.init(this.readMessageBuffer);
 
@@ -118,7 +120,16 @@ public class SocketProcessor implements Runnable {
 
     private void readFromSocket(SelectionKey key) throws IOException {
         Socket socket = (Socket) key.attachment();
-        socket.messageReader.read(socket, this.readByteBuffer);
+        try {
+            socket.messageReader.read(socket, this.readByteBuffer);
+        } catch (IOException e) {
+            System.out.println("!!socket close "+ socket.socketId);
+            key.attach(null);
+            key.cancel();
+            key.channel().close();
+            this.socketMap.remove(socket.socketId);
+            return;
+        }
 
         List<Message> fullMessages = socket.messageReader.getMessages();
         if(fullMessages.size() > 0){
@@ -158,10 +169,11 @@ public class SocketProcessor implements Runnable {
             Iterator<SelectionKey> keyIterator   = selectionKeys.iterator();
 
             while(keyIterator.hasNext()){
+
                 SelectionKey key = keyIterator.next();
 
                 Socket socket = (Socket) key.attachment();
-
+                System.out.println("Socket 回复消息: " + socket.socketId);
                 socket.messageWriter.write(socket, this.writeByteBuffer);
 
                 if(socket.messageWriter.isEmpty()){

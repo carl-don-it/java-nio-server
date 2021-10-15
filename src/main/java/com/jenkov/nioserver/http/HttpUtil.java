@@ -112,6 +112,9 @@ public class HttpUtil {
         return -1;
     }
 
+    /**
+     * \n\r
+     */
     public static int findNextLineBreak(byte[] src, int startIndex, int endIndex) {
         for(int index = startIndex; index < endIndex; index++){
             if(src[index] == '\n'){
@@ -146,6 +149,9 @@ public class HttpUtil {
         }
     }
 
+    /**
+     * 检查src从offset开始是不是value
+     */
     public static boolean matches(byte[] src, int offset, byte[] value){
         for(int i=offset, n=0; n < value.length; i++, n++){
             if(src[i] != value[n]) return false;

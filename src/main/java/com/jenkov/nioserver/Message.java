@@ -92,7 +92,7 @@ public class Message {
     public void writePartialMessageToMessage(Message message, int endIndex){
         int startIndexOfPartialMessage = message.offset + endIndex;
         int lengthOfPartialMessage     = (message.offset + message.length) - endIndex;
-
+if(lengthOfPartialMessage>0)
         System.arraycopy(message.sharedArray, startIndexOfPartialMessage, this.sharedArray, this.offset, lengthOfPartialMessage);
     }
 
