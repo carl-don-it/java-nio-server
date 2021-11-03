@@ -135,6 +135,7 @@ public class SocketProcessor implements Runnable {
         if(fullMessages.size() > 0){
             for(Message message : fullMessages){
                 message.socketId = socket.socketId;
+                System.out.println("socket channel "+socket.socketChannel.socket().getPort());
                 this.messageProcessor.process(message, this.writeProxy);  //the message processor will eventually push outgoing messages into an IMessageWriter for this socket.
             }
             fullMessages.clear();
