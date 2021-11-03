@@ -82,7 +82,16 @@ public class MessageBuffer {
     }
 
 
-
+    //todo 不会释放bytebuffer，很快会耗尽
+/*    public void free(Message resizableArray){
+        if(resizableArray.capacity == smallBlockSize){
+            this.smallFreeBlocks.put(resizableArray.offset);
+        } else if(resizableArray.capacity == mediumBlockSize){
+            this.mediumFreeBlocks.put(resizableArray.offset);
+        } else {
+            this.largeFreeBlocks.put(resizableArray.offset);
+        }
+    }*/
 
 
 }

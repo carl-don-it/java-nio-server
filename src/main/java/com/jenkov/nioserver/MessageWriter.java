@@ -26,9 +26,10 @@ public class MessageWriter {
     }
 
     public void write(Socket socket, ByteBuffer byteBuffer) throws IOException {
+        //不一定全部写完
         byteBuffer.put(this.messageInProgress.sharedArray, this.messageInProgress.offset + this.bytesWritten, this.messageInProgress.length - this.bytesWritten);
         byteBuffer.flip();
-
+        //不一定全部写完
         this.bytesWritten += socket.write(byteBuffer);
         byteBuffer.clear();
 
@@ -39,6 +40,8 @@ public class MessageWriter {
                 this.messageInProgress = null;
                 //todo unregister from selector
             }
+            // bytesWritten need to be set to zero
+            bytesWritten = 0;
         }
     }
 
